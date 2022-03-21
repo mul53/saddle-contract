@@ -12,6 +12,8 @@ import { HardhatUserConfig } from "hardhat/config"
 import dotenv from "dotenv"
 import { ethers } from "ethers"
 
+import "./tasks"
+
 dotenv.config()
 
 if (process.env.HARDHAT_FORK) {
@@ -74,6 +76,22 @@ let config: HardhatUserConfig = {
       chainId: 250,
       deploy: ["./deploy/fantom/"],
     },
+    fuse: {
+      url: "https://rpc.fuse.io",
+      chainId: 122,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_TEST_ACCOUNT,
+      },
+      deploy: ["./deploy/fuse"],
+    },
+    fuse_testnet: {
+      url: "https://rpc.fuse.io",
+      chainId: 123,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_TEST_ACCOUNT,
+      },
+      deploy: ["./deploy/fuse"],
+    },
   },
   paths: {
     sources: "./contracts",
@@ -130,6 +148,7 @@ let config: HardhatUserConfig = {
       42161: 0, // use the same address on arbitrum mainnet
       10: 0, // use the same address on optimism mainnet
       250: 0, // use the same address on fantom mainnet
+      122: 0, // use the same address on fuse mainnet
     },
   },
   spdxLicenseIdentifier: {

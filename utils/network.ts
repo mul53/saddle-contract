@@ -9,6 +9,8 @@ export const CHAIN_ID = {
   OPTIMISM_TESTNET: "69",
   FANTOM_MAINNET: "250",
   FANTOM_TESTNET: "4002",
+  FUSE_MAINNET: "122",
+  FUSE_TESTNET: "123",
 }
 
 export function isMainnet(networkId: string): boolean {
@@ -16,7 +18,8 @@ export function isMainnet(networkId: string): boolean {
     networkId == CHAIN_ID.MAINNET ||
     networkId == CHAIN_ID.ARBITRUM_MAINNET ||
     networkId == CHAIN_ID.OPTIMISM_MAINNET ||
-    networkId == CHAIN_ID.FANTOM_MAINNET
+    networkId == CHAIN_ID.FANTOM_MAINNET ||
+    networkId == CHAIN_ID.FUSE_MAINNET
   )
 }
 
@@ -27,6 +30,7 @@ export function isTestNetwork(networkId: string): boolean {
     networkId == CHAIN_ID.KOVAN ||
     networkId == CHAIN_ID.ARBITRUM_TESTNET ||
     networkId == CHAIN_ID.OPTIMISM_TESTNET ||
-    networkId == CHAIN_ID.FANTOM_TESTNET
+    networkId == CHAIN_ID.FANTOM_TESTNET ||
+    networkId == CHAIN_ID.FUSE_TESTNET
   )
 }
