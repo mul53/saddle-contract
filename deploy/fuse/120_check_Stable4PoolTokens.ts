@@ -5,9 +5,8 @@ import { BigNumber } from "ethers"
 
 const USD_TOKENS_ARGS: { [token: string]: any[] } = {
   FUSD: ["Fuse Dollar", "fUSD", "18"],
-  OneFuse: ["oneFUSE on Fuse", "oneFUSE", "18"],
-  BUSD: ["Binance USD on Fuse", "BUSD", "18"],
   USDT: ["Tether USD on Fuse", "USDT", "6"],
+  atUST: ["UST Terra on Fuse", "atUST", "18"],
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -38,4 +37,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 }
 export default func
-func.tags = ["Stable4PoolTokens"]
+func.tags = ["vUSD2PoolTokens"]

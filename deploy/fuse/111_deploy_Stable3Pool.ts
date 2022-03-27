@@ -7,22 +7,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts()
 
   // Manually check if the pool is already deployed
-  const stable3Pool = await getOrNull("Stable3Pool")
-  if (stable3Pool) {
-    log(`reusing "Stable3Pool" at ${stable3Pool.address}`)
+  const vUSD1Pool = await getOrNull("vUSD1Pool")
+  if (vUSD1Pool) {
+    log(`reusing "vUSD1Pool" at ${vUSD1Pool.address}`)
   } else {
     // Constructor arguments
     const TOKEN_ADDRESSES = [
-      (await get("DAI")).address,
+      (await get("BUSD")).address,
       (await get("USDC")).address,
       (await get("USDT")).address,
     ]
     const TOKEN_DECIMALS = [18, 6, 6]
-    const LP_TOKEN_NAME = "Stable3 LP Token"
-    const LP_TOKEN_SYMBOL = "S3LP"
+    const LP_TOKEN_NAME = "vUSD1 LP Token"
+    const LP_TOKEN_SYMBOL = "vUSD1"
     const INITIAL_A = 200
     const SWAP_FEE = 3e7 // 30bps
-    const ADMIN_FEE = 5e9 // 50% of swap fee
+    const ADMIN_FEE = 3e9 // 30% of swap fee
 
     await execute(
       "SwapFlashLoan",
@@ -40,27 +40,37 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       ).address,
     )
 
-    await save("Stable3Pool", {
+    await save("vUSD1Pool", {
       abi: (await get("SwapFlashLoan")).abi,
       address: (await get("SwapFlashLoan")).address,
     })
 
-    const lpTokenAddress = (await read("Stable3Pool", "swapStorage")).lpToken
-    log(`Stable3 LP Token at ${lpTokenAddress}`)
+    await save("vUSD1AmplificationUtils", {
+      abi: (await get("AmplificationUtils")).abi,
+      address: (await get("AmplificationUtils")).address,
+    })
 
-    await save("Stable3LPToken", {
+    await save("vUSD1SwapUtils", {
+      abi: (await get("SwapUtils")).abi,
+      address: (await get("SwapUtils")).address,
+    })
+
+    const lpTokenAddress = (await read("vUSD1Pool", "swapStorage")).lpToken
+    log(`vUSD1 LP Token at ${lpTokenAddress}`)
+
+    await save("vUSD1LPToken", {
       abi: (await get("LPToken")).abi, // LPToken ABI
       address: lpTokenAddress,
     })
 
     await execute(
-      "Stable3Pool",
+      "vUSD1Pool",
       { from: deployer, log: true },
       "transferOwnership",
-      deployer,
+      "0x03709784c96aeaAa9Dd38Df14A23e996681b2C66",
     )
   }
 }
 export default func
-func.tags = ["Stable3Pool"]
-func.dependencies = ["SwapUtils", "SwapFlashLoan", "Stable3PoolTokens"]
+func.tags = ["vUSD1Pool"]
+func.dependencies = ["SwapUtils", "SwapFlashLoan", "vUSD1PoolTokens"]
