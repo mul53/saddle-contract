@@ -4,7 +4,7 @@ import { isTestNetwork } from "../../utils/network"
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, getChainId } = hre
-  const { deploy, get } = deployments
+  const { deploy } = deployments
   const { libraryDeployer } = await getNamedAccounts()
 
   if (isTestNetwork(await getChainId())) {

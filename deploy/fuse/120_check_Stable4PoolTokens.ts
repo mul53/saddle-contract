@@ -4,12 +4,13 @@ import { isTestNetwork } from "../../utils/network"
 import { BigNumber } from "ethers"
 
 const USD_TOKENS_ARGS: { [token: string]: any[] } = {
-  DAI: ["Dai", "DAI", "18"],
-  USDC: ["USD Coin", "USDC", "6"],
-  USDT: ["Tether USD", "USDT", "6"],
+  FUSD: ["Fuse Dollar", "fUSD", "18"],
+  USDT: ["Tether USD on Fuse", "USDT", "6"],
+  atUST: ["UST Terra on Fuse", "atUST", "18"],
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  //   throw new Error("");
   const { deployments, getNamedAccounts, getChainId } = hre
   const { deploy, execute } = deployments
   const { deployer } = await getNamedAccounts()
@@ -36,4 +37,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 }
 export default func
-func.tags = ["USDPoolTokens"]
+func.tags = ["vUSD2PoolTokens"]
