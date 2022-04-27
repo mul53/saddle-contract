@@ -69,7 +69,7 @@ contract Router{
             }
             uint8 tokenAIndex; uint8 tokenBIndex;
             (tokenAIndex, tokenBIndex) = getTokensIndicesFromPool(pool, tokenPath[i-1], tokenPath[i]);
-            require(SwapFlashLoan(pool).swap(tokenAIndex, tokenBIndex, expectedDys[i-1], expectedDys[i], deadline), "");
+            require(SwapFlashLoan(pool).swap(tokenAIndex, tokenBIndex, expectedDys[i-1], expectedDys[i], deadline) > 0, "");
         }
         IERC20 tokenB = IERC20(tokenPath[tokenPath.length - 1]);
         require(tokenB.transfer(msg.sender, expectedDys[expectedDys.length - 1]), "");
