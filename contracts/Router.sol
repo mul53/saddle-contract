@@ -48,7 +48,7 @@ contract Router{
             );
 
             uint256 beforeBalance = tokenA.balanceOf(address(this));
-            tokenA.transferFrom(msg.sender, address(this), dx);
+            require(tokenA.transferFrom(msg.sender, address(this), dx), "");
 
             // Use the actual transferred amount for AMM math
             dx = tokenA.balanceOf(address(this)).sub(beforeBalance);
@@ -64,14 +64,14 @@ contract Router{
                 IERC20 tokenA = IERC20(tokenPath[i-1]);
                 // tokenA.approve(poolPath[i-1], expectedDys[i-1]);
                 if(tokenA.allowance(address(this),poolPath[i-1]) < expectedDys[i-1]){
-                    tokenA.approve(poolPath[i-1], MAX_UINT);
+                    require(tokenA.approve(poolPath[i-1], MAX_UINT), "");
                 }
             }
             uint8 tokenAIndex; uint8 tokenBIndex;
             (tokenAIndex, tokenBIndex) = getTokensIndicesFromPool(pool, tokenPath[i-1], tokenPath[i]);
-            SwapFlashLoan(pool).swap(tokenAIndex, tokenBIndex, expectedDys[i-1], expectedDys[i], deadline);
+            require(SwapFlashLoan(pool).swap(tokenAIndex, tokenBIndex, expectedDys[i-1], expectedDys[i], deadline), "");
         }
         IERC20 tokenB = IERC20(tokenPath[tokenPath.length - 1]);
-        tokenB.transfer(msg.sender, expectedDys[expectedDys.length - 1]);
+        require(tokenB.transfer(msg.sender, expectedDys[expectedDys.length - 1]), "");
     }
 }
