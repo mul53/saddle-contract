@@ -80,11 +80,38 @@ describe("Swap with router", () => {
       user1Address = await user1.getAddress()
       user2Address = await user2.getAddress()
 
-      USDC = await ethers.getContract("USDC")
-      USDT = await ethers.getContract("USDT")
-      atUST = await ethers.getContract("atUST")
-      FUSD = await ethers.getContract("FUSD")
-      BUSD = await ethers.getContract("BUSD")
+      // USDC = await ethers.getContract("USDC")
+      // USDT = await ethers.getContract("USDT")
+      // atUST = await ethers.getContract("atUST")
+      // FUSD = await ethers.getContract("FUSD")
+      // BUSD = await ethers.getContract("BUSD")
+      const erc20Factory = await ethers.getContractFactory("GenericERC20")
+
+      USDC = (await erc20Factory.deploy(
+        "USD Coin",
+        "USDC",
+        "6",
+      )) as GenericERC20
+      USDT = (await erc20Factory.deploy(
+        "USD Tether",
+        "USDT",
+        "6",
+      )) as GenericERC20
+      BUSD = (await erc20Factory.deploy(
+        "Binance USD",
+        "BUSD",
+        "6",
+      )) as GenericERC20
+      atUST = (await erc20Factory.deploy(
+        "Terra USD",
+        "atUST",
+        "18",
+      )) as GenericERC20
+      FUSD = (await erc20Factory.deploy(
+        "Fuse Dollar",
+        "FUSD",
+        "18",
+      )) as GenericERC20
 
       TOKENS1.push(BUSD, USDC, USDT)
       TOKENS2.push(FUSD, USDT, atUST)
