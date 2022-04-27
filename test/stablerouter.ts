@@ -3,8 +3,8 @@ import {
   MAX_UINT256,
   asyncForEach,
   getUserTokenBalance,
-  BIG_NUMBER_1E18,
   getCurrentBlockTimestamp,
+  BIG_NUMBER_1E18,
 } from "./testUtils"
 import { solidity } from "ethereum-waffle"
 import { deployments } from "hardhat"
@@ -128,9 +128,17 @@ describe("Swap with router", () => {
         },
       )
 
+      const amplificationUtils = await ethers.getContract("AmplificationUtils")
+      const swapUtils = await ethers.getContract("SwapUtils")
       // Get Swap contract
-      swap1 = await ethers.getContract("Swap")
-      swap2 = await ethers.getContract("Swap")
+      const swapFactory = await ethers.getContractFactory("Swap", {
+        libraries: {
+          AmplificationUtils: amplificationUtils.address,
+          SwapUtils: swapUtils.address,
+        },
+      })
+      swap1 = (await swapFactory.deploy()) as Swap
+      swap2 = (await swapFactory.deploy()) as Swap
 
       await swap1.initialize(
         TOKENS1.map((token) => token.address),
@@ -211,6 +219,7 @@ describe("Swap with router", () => {
         contract: "Router",
         skipIfAlreadyDeployed: true,
       })
+      router = await ethers.getContract("Router")
     },
   )
 
@@ -221,18 +230,22 @@ describe("Swap with router", () => {
   describe("swapWithRoute", () => {
     it("Swap in a single pool", async () => {
       // Test swapping 1 BUSD for USDC in the swap1 pool using the router
-      const calcTokenAmountWithinPool = await swap1.calculateSwap(0, 1, 1e18)
+      const calcTokenAmountWithinPool = await swap1.calculateSwap(
+        0,
+        1,
+        BIG_NUMBER_1E18,
+      )
       const calcTokenAmountRouter = await router.calculateAndCheckSwapRoute(
         [swap1.address],
         [BUSD.address, USDC.address],
-        1e18,
+        BIG_NUMBER_1E18,
       )
       expect(calcTokenAmountRouter[0]).to.be.eq(BIG_NUMBER_1E18)
       expect(calcTokenAmountRouter[1]).to.be.eq(calcTokenAmountWithinPool)
 
       const usdcBalanceBefore = await getUserTokenBalance(user1, USDC)
 
-      await BUSD.connect(user1).approve(router.address, 1e18)
+      await BUSD.connect(user1).approve(router.address, BIG_NUMBER_1E18)
       await router
         .connect(user1)
         .swapWithRoute(
@@ -244,7 +257,7 @@ describe("Swap with router", () => {
         )
 
       const usdcBalanceAfter = await getUserTokenBalance(user1, USDC)
-      expect(usdcBalanceAfter.sub(usdcBalanceBefore)).to.be.gte(
+      expect(usdcBalanceAfter.sub(usdcBalanceBefore)).to.be.eq(
         calcTokenAmountWithinPool,
       )
     })
@@ -256,7 +269,11 @@ describe("Swap with router", () => {
       // TOKENS1.push(BUSD, USDC, USDT)
       // TOKENS2.push(FUSD, USDT, atUST)
 
-      const calcPool1BusdToUsdt = await swap1.calculateSwap(0, 2, 1e18)
+      const calcPool1BusdToUsdt = await swap1.calculateSwap(
+        0,
+        2,
+        BIG_NUMBER_1E18,
+      )
       const calcPool2UsdtToFusd = await swap1.calculateSwap(
         1,
         0,
@@ -265,7 +282,7 @@ describe("Swap with router", () => {
       const calcTokenAmountRouter = await router.calculateAndCheckSwapRoute(
         [swap1.address, swap2.address],
         [BUSD.address, USDT.address, FUSD.address],
-        1e18,
+        BIG_NUMBER_1E18,
       )
       expect(calcTokenAmountRouter[0]).to.be.eq(BIG_NUMBER_1E18)
       expect(calcTokenAmountRouter[1]).to.be.eq(calcPool1BusdToUsdt)
@@ -273,7 +290,7 @@ describe("Swap with router", () => {
 
       const fusdBalanceBefore = await getUserTokenBalance(user1, FUSD)
 
-      await BUSD.connect(user1).approve(router.address, 1e18)
+      await BUSD.connect(user1).approve(router.address, BIG_NUMBER_1E18)
       await router
         .connect(user1)
         .swapWithRoute(
@@ -285,7 +302,7 @@ describe("Swap with router", () => {
         )
 
       const fusdBalanceAfter = await getUserTokenBalance(user1, FUSD)
-      expect(fusdBalanceAfter.sub(fusdBalanceBefore)).to.be.gte(
+      expect(fusdBalanceAfter.sub(fusdBalanceBefore)).to.be.eq(
         calcPool2UsdtToFusd,
       )
     })
