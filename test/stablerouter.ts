@@ -80,11 +80,6 @@ describe("Swap with router", () => {
       user1Address = await user1.getAddress()
       user2Address = await user2.getAddress()
 
-      // USDC = await ethers.getContract("USDC")
-      // USDT = await ethers.getContract("USDT")
-      // atUST = await ethers.getContract("atUST")
-      // FUSD = await ethers.getContract("FUSD")
-      // BUSD = await ethers.getContract("BUSD")
       const erc20Factory = await ethers.getContractFactory("GenericERC20")
 
       USDC = (await erc20Factory.deploy(
@@ -265,9 +260,6 @@ describe("Swap with router", () => {
     it("Swap in two pools", async () => {
       // Test swapping 1 BUSD to FUSD using Router
       // The router should swap 1 BUSD for x USDT on swap1 and then x USDT to FUSD on swap2
-
-      // TOKENS1.push(BUSD, USDC, USDT)
-      // TOKENS2.push(FUSD, USDT, atUST)
 
       const calcPool1BusdToUsdt = await swap1.calculateSwap(
         0,
